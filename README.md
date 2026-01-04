@@ -1,5 +1,9 @@
 # 🛡️ SkyvyOS Secure Server
 
+<div align="center">
+  <img src="branding/logo.png" alt="SkyvyOS Logo" width="200">
+</div>
+
 ![SkyvyOS Banner](https://img.shields.io/badge/SkyvyOS-Secure%20Server-cyan?style=for-the-badge&logo=debian)
 ![License](https://img.shields.io/badge/License-GPL%20v3.0-blue?style=for-the-badge)
 ![Debian](https://img.shields.io/badge/Based%20on-Debian%2012-red?style=for-the-badge&logo=debian)
