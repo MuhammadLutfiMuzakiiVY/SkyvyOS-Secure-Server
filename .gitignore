@@ -1,0 +1,39 @@
+# Build artifacts
+build/
+*.iso
+*.img
+*.qcow2
+*.vdi
+*.vmdk
+
+# Logs
+*.log
+/var/log/
+/var/lib/skyvyos/
+
+# Temporary files
+*.tmp
+*.swp
+*~
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+venv/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Git
+.git/
+
+# System
+Thumbs.db
+desktop.ini

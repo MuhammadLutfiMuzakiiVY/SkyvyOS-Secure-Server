@@ -1,0 +1,176 @@
+# SkyvyOS SSH Server Configuration Template
+# This file should be placed in /etc/ssh/sshd_config.d/99-skyvyos-hardening.conf
+
+# Network Configuration
+# =====================
+Port 22
+AddressFamily any
+ListenAddress 0.0.0.0
+# ListenAddress ::  # Uncomment for IPv6
+
+# Protocol
+# ========
+Protocol 2
+
+# Host Keys
+# =========
+# Default host keys (generated on first boot)
+# HostKey /etc/ssh/ssh_host_rsa_key
+# HostKey /etc/ssh/ssh_host_ecdsa_key
+# HostKey /etc/ssh/ssh_host_ed25519_key
+
+# Ciphers and Key Exchange
+# =========================
+# Use only strong ciphers
+# Uncomment to restrict further:
+# Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com
+# MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+# KexAlgorithms curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
+
+# Authentication
+# ==============
+
+# Login settings
+LoginGraceTime 60
+PermitRootLogin no
+StrictModes yes
+MaxAuthTries 3
+MaxSessions 10
+
+# Public key authentication (enabled)
+PubkeyAuthentication yes
+
+# Expect ~/.ssh/authorized_keys2 is deprecated
+AuthorizedKeysFile .ssh/authorized_keys
+
+# Password authentication (DISABLED for security)
+PasswordAuthentication no
+PermitEmptyPasswords no
+
+# Challenge-response authentication (disabled)
+ChallengeResponseAuthentication no
+
+# Kerberos authentication (disabled)
+KerberosAuthentication no
+KerberosOrLocalPasswd no
+KerberosTicketCleanup yes
+
+# GSSAPI authentication (disabled)
+GSSAPIAuthentication no
+GSSAPICleanupCredentials yes
+
+# Other authentication methods (disabled)
+HostbasedAuthentication no
+IgnoreRhosts yes
+
+# PAM (Pluggable Authentication Modules)
+UsePAM yes
+
+# Security Features
+# =================
+
+# Disable X11 forwarding
+X11Forwarding no
+X11DisplayOffset 10
+PrintMotd no
+PrintLastLog yes
+
+# TCP settings
+TCPKeepAlive yes
+ClientAliveInterval 300
+ClientAliveCountMax 2
+
+# DNS
+UseDNS no
+
+# Environment
+PermitUserEnvironment no
+
+# Agent and tunnel forwarding
+AllowAgentForwarding yes
+AllowTcpForwarding yes
+GatewayPorts no
+
+# Disable tunneling
+PermitTunnel no
+
+# Logging
+# =======
+SyslogFacility AUTH
+LogLevel VERBOSE
+
+# Banner
+# ======
+# Display banner before authentication
+# Banner /etc/issue.net
+
+# Subsystems
+# ==========
+# SFTP subsystem
+Subsystem sftp /usr/lib/openssh/sftp-server -f AUTHPRIV -l INFO
+
+# Access Control
+# ==============
+
+# Allow/Deny users or groups (uncomment to use)
+# AllowUsers user1 user2
+# AllowGroups sudo ssh-users
+# DenyUsers baduser
+# DenyGroups badgroup
+
+# Example: Only allow specific users
+# AllowUsers admin deploy
+
+# Example: Only allow sudo group
+# AllowGroups sudo
+
+# Advanced Options
+# ================
+
+# Maximum startup connections
+MaxStartups 10:30:60
+
+# Login grace time before timeout
+LoginGraceTime 60
+
+# Compression
+Compression delayed
+
+# Accept locale environment variables
+AcceptEnv LANG LC_*
+
+# Additional Security
+# ===================
+
+# Disable TTY allocation for security
+# PermitTTY yes
+
+# Disable user rc files
+PermitUserRC no
+
+# Stream local bind (Unix domain sockets)
+# StreamLocalBindUnlink no
+
+# Fingerprint hash algorithm
+FingerprintHash sha256
+
+# Update host keys
+# UpdateHostKeys no
+
+# ============================================
+# IMPORTANT SECURITY NOTES:
+# ============================================
+# 1. PasswordAuthentication is DISABLED
+#    - Only SSH key authentication is allowed
+#    - Make sure you have added your public key before rebooting
+#
+# 2. Root login is DISABLED
+#    - Login as regular user, then use sudo
+#
+# 3. After making changes, test with:
+#    sudo sshd -t
+#
+# 4. Apply changes with:
+#    sudo systemctl restart sshd
+#
+# 5. ALWAYS keep a backup session open when testing SSH changes!

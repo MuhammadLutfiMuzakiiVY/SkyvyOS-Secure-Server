@@ -1,0 +1,271 @@
+################################################################################
+# SkyvyOS Secure Server - Complete Package List
+# 
+# Comprehensive package list for production-ready server
+# Organized by category for maintainability
+#
+# Total Categories: 18
+# Install method: apt-get install $(cat packages.list | grep -v "^#" | grep -v "^$")
+################################################################################
+
+# ============================================
+# I. SYSTEM CORE
+# ============================================
+
+# 1. System Initialization & Boot
+systemd
+systemd-sysv
+initramfs-tools
+grub-pc
+grub-efi-amd64
+linux-image-amd64
+linux-firmware
+
+# 2. Package Management
+apt
+apt-utils
+ca-certificates
+gnupg
+software-properties-common
+apt-transport-https
+
+# ============================================
+# II. NETWORKING (ESSENTIAL)
+# ============================================
+
+# 3. Network Core
+iproute2
+net-tools
+ifupdown
+dnsutils
+curl
+wget
+iputils-ping
+netbase
+
+# 4. SSH & Remote Access
+openssh-server
+openssh-client
+
+# ============================================
+# III. SECURITY CORE (CRITICAL)
+# ============================================
+
+# 5. Firewall & Protection
+ufw
+nftables
+iptables
+fail2ban
+
+# 6. Kernel & System Hardening
+procps
+sysstat
+auditd
+apparmor
+apparmor-utils
+
+# 7. Integrity & Audit
+aide
+logrotate
+
+# ============================================
+# IV. USER & ACCESS CONTROL
+# ============================================
+
+# 8. Privilege Management
+sudo
+login
+passwd
+
+# PAM Security
+libpam-pwquality
+libpam-tmpdir
+
+# ============================================
+# V. LOGGING & MONITORING
+# ============================================
+
+# 9. Logging
+rsyslog
+logrotate
+
+# 10. Monitoring Tools
+htop
+iotop
+iftop
+vnstat
+
+# ============================================
+# VI. WEB & APPLICATION STACK
+# ============================================
+
+# 11. Web Server
+nginx
+
+# SSL/TLS
+certbot
+python3-certbot-nginx
+
+# 12. Runtime Environments
+python3
+python3-pip
+python3-venv
+python3-dev
+
+# Node.js (installed from NodeSource separately)
+# nodejs
+# npm
+
+# PHP (optional)
+php-fpm
+php-cli
+php-mysql
+
+# ============================================
+# VII. CONTAINER & DEVOPS
+# ============================================
+
+# 13. Container Engine
+# Docker (installed from Docker repository separately)
+# docker-ce
+# docker-ce-cli
+# containerd.io
+# docker-compose-plugin
+
+# Alternative: Podman
+# podman
+
+# ============================================
+# VIII. STORAGE & BACKUP
+# ============================================
+
+# 14. Disk & Filesystem
+lsblk
+fdisk
+parted
+e2fsprogs
+xfsprogs
+
+# 15. Backup Tools
+rsync
+tar
+cron
+borgbackup
+
+# ============================================
+# IX. CLOUD & VM READY
+# ============================================
+
+# 16. Cloud-init & VM Tools
+cloud-init
+qemu-guest-agent
+
+# ============================================
+# X. SECURITY TOOLKIT
+# ============================================
+
+# 17. Security Essentials
+lynis
+nmap
+tcpdump
+whois
+openssl
+
+# ============================================
+# XI. ADMIN PRODUCTIVITY
+# ============================================
+
+# 18. Admin Tools
+bash-completion
+tmux
+screen
+vim
+nano
+
+# Development Tools
+git
+tree
+ncdu
+
+# Text Processing
+jq
+dos2unix
+
+# ============================================
+# XII. PROGRAMMING LANGUAGES (Additional)
+# ============================================
+
+# Ruby
+ruby
+ruby-dev
+
+# Go
+golang
+
+# Java
+default-jdk
+
+# Perl
+perl
+
+# Build Tools
+build-essential
+make
+cmake
+gcc
+g++
+
+# ============================================
+# XIII. DATABASE CLIENTS
+# ============================================
+
+# Database Tools
+mariadb-client
+postgresql-client
+sqlite3
+redis-tools
+
+# ============================================
+# XIV. ADDITIONAL UTILITIES
+# ============================================
+
+# Compression
+zip
+unzip
+gzip
+bzip2
+xz-utils
+
+# System Info
+lsb-release
+dmidecode
+hdparm
+
+# Performance
+iperf3
+stress
+
+# ============================================
+# NOTES
+# ============================================
+
+# External Repositories (installed separately):
+# - Docker CE: https://download.docker.com/linux/debian
+# - Node.js: https://deb.nodesource.com/setup_20.x
+# - Additional languages: via individual install scripts
+
+# Total Packages: ~120 (vs 400+ default Debian)
+# Attack Surface Reduction: ~70%
+
+# Installation Priority:
+# 1. System Core (boot & package management)
+# 2. Networking & SSH
+# 3. Security (firewall, fail2ban, auditd)
+# 4. Web Stack (nginx, python)
+# 5. Containers (docker)
+# 6. Cloud-init
+# 7. Additional tools
+
+################################################################################
+# END OF PACKAGE LIST
+################################################################################

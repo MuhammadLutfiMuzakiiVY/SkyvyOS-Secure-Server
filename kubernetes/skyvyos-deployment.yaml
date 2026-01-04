@@ -1,0 +1,392 @@
+# SkyvyOS Kubernetes Deployment Template
+# Deploy SkyvyOS-based applications on Kubernetes
+
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: skyvyos-apps
+  labels:
+    security: hardened
+    environment: production
+
+---
+# ConfigMap for application configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skyvyos-config
+  namespace: skyvyos-apps
+data:
+  MAX_CONNECTIONS: "1000"
+  LOG_LEVEL: "info"
+  ENABLE_METRICS: "true"
+
+---
+# Secret for sensitive data
+apiVersion: v1
+kind: Secret
+metadata:
+  name: skyvyos-secrets
+  namespace: skyvyos-apps
+type: Opaque
+stringData:
+  database-password: "changeme"
+  api-key: "your-api-key-here"
+
+---
+# PersistentVolumeClaim for data persistence
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: skyvyos-data
+  namespace: skyvyos-apps
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: fast-ssd
+
+---
+# Deployment with security hardening
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: skyvyos-app
+  namespace: skyvyos-apps
+  labels:
+    app: skyvyos-app
+    version: v1.0.0
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: skyvyos-app
+  template:
+    metadata:
+      labels:
+        app: skyvyos-app
+        version: v1.0.0
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9090"
+    spec:
+      # Security context for pod
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
+      
+      # Service account
+      serviceAccountName: skyvyos-app-sa
+      automountServiceAccountToken: false
+      
+      # Init container for setup
+      initContainers:
+      - name: init-setup
+        image: busybox:latest
+        command: ['sh', '-c', 'echo "Initializing SkyvyOS app..."']
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
+      
+      containers:
+      - name: app
+        image: skyvyos/app:v1.0.0
+        imagePullPolicy: Always
+        
+        # Security context for container
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          capabilities:
+            drop:
+              - ALL
+            add:
+              - NET_BIND_SERVICE
+        
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+        - name: metrics
+          containerPort: 9090
+          protocol: TCP
+        
+        # Environment variables
+        env:
+        - name: MAX_CONNECTIONS
+          valueFrom:
+            configMapKeyRef:
+              name: skyvyos-config
+              key: MAX_CONNECTIONS
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: skyvyos-secrets
+              key: database-password
+        
+        # Resource limits
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        
+        # Liveness probe
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        
+        # Readiness probe
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        
+        # Startup probe
+        startupProbe:
+          httpGet:
+            path: /started
+            port: 8080
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          failureThreshold: 30
+        
+        # Volume mounts
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: tmp
+          mountPath: /tmp
+        - name: cache
+          mountPath: /cache
+      
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: skyvyos-data
+      - name: tmp
+        emptyDir: {}
+      - name: cache
+        emptyDir: {}
+      
+      # Affinity rules
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app
+                  operator: In
+                  values:
+                  - skyvyos-app
+              topologyKey: kubernetes.io/hostname
+
+---
+# Service for the application
+apiVersion: v1
+kind: Service
+metadata:
+  name: skyvyos-app-service
+  namespace: skyvyos-apps
+  labels:
+    app: skyvyos-app
+spec:
+  type: ClusterIP
+  selector:
+    app: skyvyos-app
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+  - name: metrics
+    protocol: TCP
+    port: 9090
+    targetPort: 9090
+
+---
+# Ingress for external access
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: skyvyos-app-ingress
+  namespace: skyvyos-apps
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - app.example.com
+    secretName: skyvyos-app-tls
+  rules:
+  - host: app.example.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: skyvyos-app-service
+            port:
+              number: 80
+
+---
+# HorizontalPodAutoscaler for auto-scaling
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: skyvyos-app-hpa
+  namespace: skyvyos-apps
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: skyvyos-app
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 15
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+      selectPolicy: Max
+
+---
+# Pod Disruption Budget for high availability
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: skyvyos-app-pdb
+  namespace: skyvyos-apps
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: skyvyos-app
+
+---
+# NetworkPolicy for security
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: skyvyos-app-netpol
+  namespace: skyvyos-apps
+spec:
+  podSelector:
+    matchLabels:
+      app: skyvyos-app
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - namespaceSelector:
+        matchLabels:
+          name: ingress-nginx
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: TCP
+      port: 443
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+
+---
+# ServiceAccount with RBAC
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: skyvyos-app-sa
+  namespace: skyvyos-apps
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: skyvyos-app-role
+  namespace: skyvyos-apps
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: skyvyos-app-rolebinding
+  namespace: skyvyos-apps
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: skyvyos-app-role
+subjects:
+- kind: ServiceAccount
+  name: skyvyos-app-sa
+  namespace: skyvyos-apps
