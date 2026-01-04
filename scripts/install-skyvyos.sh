@@ -411,11 +411,11 @@ setup_branding() {
     # Create /etc/os-release
     cat > /etc/os-release <<EOF
 NAME="SkyvyOS Server"
-VERSION="1.0 (Stable)"
+VERSION="Stable"
 ID=skyvyos
 ID_LIKE=debian
-PRETTY_NAME="SkyvyOS Server 1.0"
-VERSION_ID="1.0"
+PRETTY_NAME="SkyvyOS Server"
+VERSION_ID="stable"
 VERSION_CODENAME=stable
 HOME_URL="https://skyvy.os"
 SUPPORT_URL="https://skyvy.os/support"
@@ -435,7 +435,7 @@ EOF
 ║     ███████║██║  ██╗   ██║    ╚████╔╝    ██║            ║
 ║     ╚══════╝╚═╝  ╚═╝   ╚═╝     ╚═══╝     ╚═╝            ║
 ║                                                           ║
-║                 SkyvyOS Server 1.0                        ║
+║                   SkyvyOS Server                          ║
 ║          Lightweight • Secure • Production Ready          ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
@@ -446,7 +446,7 @@ EOF
 
     # Create issue (pre-login banner)
     cat > /etc/issue <<'EOF'
-SkyvyOS Server 1.0 - \n \l
+SkyvyOS Server - \n \l
 
 EOF
 
@@ -499,7 +499,7 @@ installation_complete() {
     echo -e "${GREEN}═══════════════════════════════════════════════════════════${NC}\n"
     
     echo -e "${BLUE}System Information:${NC}"
-    echo -e "  • OS: SkyvyOS Server 1.0"
+    echo -e "  • OS: SkyvyOS Server"
     echo -e "  • Base: Debian $(cat /etc/debian_version)"
     echo -e "  • Kernel: $(uname -r)"
     

@@ -1,9 +1,9 @@
 NAME="SkyvyOS Secure Server"
-VERSION="1.0.0 (Debian Bookworm Edition)"
+VERSION="Debian Bookworm Edition"
 ID=skyvyos
 ID_LIKE=debian
-PRETTY_NAME="SkyvyOS Secure Server 1.0.0"
-VERSION_ID="1.0"
+PRETTY_NAME="SkyvyOS Secure Server"
+VERSION_ID="stable"
 VERSION_CODENAME=hardened
 HOME_URL="https://github.com/YOUR_REPO/skyvyos-server"
 SUPPORT_URL="https://github.com/YOUR_REPO/skyvyos-server/issues"
