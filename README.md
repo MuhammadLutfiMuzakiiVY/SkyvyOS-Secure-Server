@@ -1,159 +1,286 @@
-# SkyvyOS Server
+# 🛡️ SkyvyOS Secure Server
 
-**Custom Debian-based Server Operating System**
+![SkyvyOS Banner](https://img.shields.io/badge/SkyvyOS-Secure%20Server-cyan?style=for-the-badge&logo=debian)
+![License](https://img.shields.io/badge/License-GPL%20v3.0-blue?style=for-the-badge)
+![Debian](https://img.shields.io/badge/Based%20on-Debian%2012-red?style=for-the-badge&logo=debian)
 
-SkyvyOS Server is a lightweight, secure, and stable server operating system built on Debian Stable. Designed for production deployments, it's optimized for websites, bots, and application servers with 24/7 uptime requirements.
+**Enterprise Security-Hardened Debian Server Distribution**
 
-## Features
+SkyvyOS Secure Server adalah distribusi Linux server yang di-hardening dengan keamanan tingkat enterprise, dibangun di atas Debian 12 (Bookworm). Dirancang untuk deployment produksi dengan keamanan enterprise, performa tinggi, dan kemudahan deployment.
 
-✨ **Lightweight & Fast** - Minimal footprint with only essential services  
-🔒 **Security Hardened** - SSH key-only auth, UFW firewall, fail2ban, automatic security updates  
-🚀 **Production Ready** - Pre-configured Nginx, Docker, and common runtimes  
-📦 **Easy Deployment** - Automated installation from Debian minimal  
-☁️ **VM Template Ready** - Compatible with KVM, VMware, VirtualBox, Hyper-V  
-🎯 **CLI Only** - No GUI overhead, built for server environments  
+---
 
-## Default Stack
+## 🌟 Features
 
-- **Web Server**: Nginx
-- **Containerization**: Docker & Docker Compose
-- **Runtimes**: Node.js LTS, Python 3, PHP 8.x
-- **Security**: UFW, fail2ban, unattended-upgrades
-- **Tools**: Git, curl, wget, vim, htop, net-tools
-- **TLS**: Certbot for Let's Encrypt certificates
+| Feature | Description |
+|---------|-------------|
+| ✨ **Lightweight & Fast** | Footprint minimal dengan layanan esensial saja |
+| 🔒 **Security Hardened** | CIS compliance, kernel hardening, nftables firewall |
+| 🛡️ **Intrusion Prevention** | Fail2Ban, AppArmor, Audit daemon |
+| 🚀 **Production Ready** | Pre-configured Nginx, Docker, dan runtime populer |
+| 📦 **Automated Deployment** | Preseed untuk instalasi otomatis |
+| ☁️ **VM Template Ready** | Proxmox, VMware, VirtualBox ready |
+| 💻 **Multi-Language** | 24+ bahasa pemrograman terinstall |
+| 🎯 **CLI Only** | Tanpa GUI, dioptimalkan untuk server |
 
-## System Requirements
+---
 
-- **Base**: Debian 12 (Bookworm) minimal installation
-- **RAM**: Minimum 512 MB (1 GB+ recommended)
-- **Disk**: 5 GB minimum (10 GB+ recommended)
-- **CPU**: 1 core minimum
-- **Network**: Internet connection for installation
+## 📋 System Requirements
 
-## Quick Start
+| Component | Minimum | Recommended |
+|-----------|---------|-------------|
+| **CPU** | 1 core | 2+ cores |
+| **RAM** | 512 MB | 2 GB+ |
+| **Disk** | 10 GB | 20 GB+ |
+| **Network** | Internet | Static IP |
+| **Base OS** | Debian 12 | Debian 12 |
 
-### 1. Install Debian Minimal
+---
 
-Start with a fresh Debian 12 (Bookworm) minimal installation (netinst ISO recommended).
+## 📖 Tata Cara Instalasi
 
-### 2. Download SkyvyOS Installer
+### Metode 1: Instalasi dari Debian Minimal (Recommended)
 
+#### Langkah 1: Install Debian 12 Minimal
+Download dan install Debian 12 Bookworm dari [debian.org](https://www.debian.org/distrib/netinst) menggunakan netinst ISO.
+
+#### Langkah 2: Download Script Installer
 ```bash
-wget https://raw.githubusercontent.com/YOUR_REPO/skyvyos-server/main/scripts/install-skyvyos.sh
-chmod +x install-skyvyos.sh
+# Login sebagai root atau user dengan sudo
+sudo apt update && sudo apt install -y wget git
+
+# Clone repository
+git clone https://github.com/MuhammadLutfiMuzakiiVY/SkyvyOS-Secure-Server.git
+cd SkyvyOS-Secure-Server
 ```
 
-### 3. Run Installation
-
+#### Langkah 3: Jalankan Installer
 ```bash
-sudo ./install-skyvyos.sh
+sudo chmod +x scripts/install-skyvyos.sh
+sudo bash scripts/install-skyvyos.sh
 ```
 
-The installer will:
-- Update system packages
-- Install all required software
-- Apply security hardening
-- Configure services
-- Setup SkyvyOS branding
-- Configure firewall
-
-### 4. Reboot
-
+#### Langkah 4: Reboot Sistem
 ```bash
 sudo reboot
 ```
 
-## Post-Installation
+---
 
-After reboot, you'll see the SkyvyOS Server login screen. The system is ready for:
+### Metode 2: Build Custom ISO
 
-- **Web hosting**: Nginx is configured and running
-- **Application deployment**: Docker ready for containers
-- **Development**: Node.js, Python, and PHP installed
-- **Security**: SSH hardened, firewall active, fail2ban monitoring
-
-## Documentation
-
-- [Architecture Overview](docs/SkyvyOS-Architecture.md)
-- [Deployment Guide](docs/DEPLOYMENT-GUIDE.md)
-- [Proxmox Template Setup](docs/proxmox-deployment.md)
-
-## Directory Structure
-
-```
-SkyvyOS Server/
-├── scripts/
-│   ├── install-skyvyos.sh          # Main installation script
-│   ├── security-hardening.sh       # Security configuration
-│   └── prepare-vm-template.sh      # VM template preparation
-├── config/
-│   ├── packages.list               # Package definitions
-│   ├── sshd_config.template        # SSH hardening
-│   ├── ufw-rules.sh                # Firewall rules
-│   ├── sysctl-hardening.conf       # Kernel security
-│   └── limits.conf                 # Resource limits
-├── branding/
-│   ├── os-release                  # OS identification
-│   ├── motd                        # Message of the day
-│   ├── issue                       # Pre-login banner
-│   └── skyvy-info.sh               # System info script
-└── docs/
-    ├── SkyvyOS-Architecture.md     # Architecture docs
-    ├── DEPLOYMENT-GUIDE.md         # Deployment guide
-    └── VM-TEMPLATE-GUIDE.md        # VM template guide
-```
-
-## Firewall Configuration
-
-By default, SkyvyOS Server has a strict firewall policy:
-
-- **SSH (22)**: Allowed
-- **HTTP (80)**: Allowed
-- **HTTPS (443)**: Allowed
-- **All other incoming**: Denied
-
-To open additional ports:
-
+#### Langkah 1: Siapkan Build Environment
 ```bash
-sudo ufw allow PORT_NUMBER
-sudo ufw reload
+# Di sistem Debian/Ubuntu
+sudo apt update
+sudo apt install -y live-build debootstrap squashfs-tools genisoimage syslinux isolinux xorriso
 ```
 
-## Service Management
-
-All services are managed via systemd:
-
+#### Langkah 2: Clone Repository
 ```bash
-# Check service status
-sudo systemctl status nginx
-sudo systemctl status docker
-
-# Start/stop/restart services
-sudo systemctl start SERVICE_NAME
-sudo systemctl stop SERVICE_NAME
-sudo systemctl restart SERVICE_NAME
+git clone https://github.com/MuhammadLutfiMuzakiiVY/SkyvyOS-Secure-Server.git
+cd SkyvyOS-Secure-Server
 ```
 
-## Security Features
+#### Langkah 3: Build ISO
+```bash
+sudo chmod +x scripts/build-skyvyos-iso.sh
+sudo bash scripts/build-skyvyos-iso.sh
+```
 
-- **SSH Hardening**: Root login disabled, password authentication disabled
-- **Firewall**: UFW with default deny policy
-- **Intrusion Prevention**: fail2ban monitoring SSH, Nginx
-- **Automatic Updates**: Security patches applied automatically
-- **Kernel Hardening**: sysctl security parameters optimized
+#### Langkah 4: Hasil ISO
+File ISO akan berada di folder `build/`:
+```
+SkyvyOS-Secure-Server-YYYYMMDD-HHMMSS.iso
+```
 
-## Contributing
-
-This is a personal/custom OS project. Feel free to fork and adapt for your needs.
-
-## License
-
-MIT License - Free to use and modify
-
-## Support
-
-For issues or questions, consult the documentation in the `docs/` directory.
+#### Langkah 5: Install dari ISO
+1. Boot dari USB/DVD yang berisi ISO
+2. Pilih "Install SkyvyOS Secure Server"
+3. Ikuti wizard instalasi
+4. Sistem akan otomatis hardened setelah reboot
 
 ---
 
-**SkyvyOS Server** - Built for stability, secured by default, optimized for production.
+### Metode 3: Deploy ke Virtual Machine
+
+#### Proxmox VE
+```bash
+# Di node Proxmox
+sudo bash scripts/prepare-proxmox-template.sh
+```
+
+#### VMware/VirtualBox
+```bash
+# Setelah install SkyvyOS
+sudo bash scripts/prepare-vm-template.sh
+```
+
+---
+
+## 🔧 Post-Installation
+
+### Cek Status Sistem
+```bash
+# Tampilkan informasi sistem
+skyvyos-info
+
+# Audit keamanan
+sudo skyvy-security-audit
+
+# Status firewall
+sudo nft list ruleset
+```
+
+### Konfigurasi SSH Key
+```bash
+# Buat SSH key di komputer lokal
+ssh-keygen -t ed25519 -C "your-email@example.com"
+
+# Copy ke server
+ssh-copy-id -i ~/.ssh/id_ed25519.pub user@server-ip
+```
+
+### Buka Port Tambahan
+```bash
+# Contoh: Buka port 8080
+sudo nft add rule inet filter input tcp dport 8080 accept
+sudo nft list ruleset > /etc/nftables.conf
+```
+
+---
+
+## 📁 Struktur Project
+
+```
+SkyvyOS-Secure-Server/
+├── 📁 branding/           # Branding files (MOTD, os-release, dll)
+├── 📁 config/             # Konfigurasi sistem
+│   ├── nftables.conf      # Firewall rules
+│   ├── sshd_config        # SSH hardening
+│   ├── sysctl-hardening   # Kernel security
+│   └── packages.list      # Daftar packages
+├── 📁 docs/               # Dokumentasi lengkap
+├── 📁 kubernetes/         # K8s deployment files
+├── 📁 preseed/            # Automated installation
+├── 📁 scripts/            # Installer & tools
+│   ├── install-skyvyos.sh     # Main installer
+│   ├── build-skyvyos-iso.sh   # ISO builder
+│   └── skyvy-security-audit   # Security auditor
+└── 📄 README.md           # File ini
+```
+
+---
+
+## 🛡️ Security Features
+
+| Layer | Protection |
+|-------|------------|
+| **Kernel** | Hardened sysctl, ASLR, exec-shield |
+| **Network** | nftables firewall, rate limiting |
+| **Auth** | SSH key-only, 2FA ready, PAM hardening |
+| **Intrusion** | Fail2Ban, AIDE, Auditd |
+| **Access** | AppArmor mandatory access control |
+| **Updates** | Automatic security patches (unattended-upgrades) |
+
+---
+
+## 💻 Default Software Stack
+
+### Web & Server
+- **Nginx** - High-performance web server
+- **Docker & Compose** - Containerization platform
+- **Certbot** - Let's Encrypt SSL certificates
+
+### Programming Languages
+- Python 3 + pip + venv
+- Node.js LTS + npm
+- PHP 8.x + Composer
+- Go, Rust, Ruby, Java, C/C++
+- Dan 20+ bahasa lainnya
+
+### Security Tools
+- Fail2Ban - Intrusion prevention
+- AIDE - File integrity monitoring
+- Auditd - System auditing
+- ClamAV - Antivirus (optional)
+
+### Monitoring
+- htop, iotop, vnstat
+- journalctl logs
+- Custom skyvy-security-audit
+
+---
+
+## 🆘 Troubleshooting
+
+### SSH Connection Refused
+```bash
+# Pastikan SSH service running
+sudo systemctl status ssh
+
+# Cek firewall
+sudo nft list ruleset | grep ssh
+```
+
+### Permission Denied
+```bash
+# Pastikan SSH key sudah di-copy
+cat ~/.ssh/authorized_keys
+
+# Cek permission
+chmod 700 ~/.ssh
+chmod 600 ~/.ssh/authorized_keys
+```
+
+### Service Not Starting
+```bash
+# Cek log service
+sudo journalctl -u SERVICE_NAME -xe
+
+# Restart service
+sudo systemctl restart SERVICE_NAME
+```
+
+---
+
+## 📚 Dokumentasi Lengkap
+
+| Dokumentasi | Deskripsi |
+|-------------|-----------|
+| [Architecture](docs/SkyvyOS-Architecture.md) | Arsitektur sistem |
+| [Deployment Guide](docs/DEPLOYMENT-GUIDE.md) | Panduan deployment |
+| [Security Architecture](docs/SECURITY-ARCHITECTURE.md) | Arsitektur keamanan |
+| [VM Template Guide](docs/VM-TEMPLATE-GUIDE.md) | Panduan template VM |
+| [Quick Reference](docs/QUICK-REFERENCE.md) | Reference cepat |
+| [Getting Started (ID)](GETTING-STARTED-ID.md) | Panduan Bahasa Indonesia |
+
+---
+
+## 📄 License
+
+GNU General Public License v3.0 - Lihat file [LICENSE](LICENSE)
+
+---
+
+## 🤝 Contributing
+
+Kontribusi sangat diterima! Fork repository ini dan kirim Pull Request.
+
+---
+
+## 📧 Support
+
+- **GitHub Issues**: [Open Issue](https://github.com/MuhammadLutfiMuzakiiVY/SkyvyOS-Secure-Server/issues)
+- **Documentation**: Lihat folder `docs/`
+
+---
+
+<div align="center">
+
+**🔒 SkyvyOS Secure Server**  
+*Enterprise Security-Hardened Linux Distribution*
+
+Made with ❤️ for Security
+
+</div>
